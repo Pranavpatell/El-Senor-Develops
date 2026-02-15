@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Services | El Señor Technologies</title>
@@ -29,7 +28,7 @@
             color: #faf8fc;
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
-            /* Performance: Removed perspective from body to avoid global repaints */
+            width: 100%;
         }
 
         /* --- 2. SCROLL PROGRESS BAR --- */
@@ -41,7 +40,7 @@
             height: 4px;
             z-index: 2000;
             background: rgba(255,255,255,0.05);
-            pointer-events: none; /* Optimization: Mouse ignores this layer */
+            pointer-events: none;
         }
 
         .progress-bar {
@@ -49,8 +48,8 @@
             background: #38bdf8;
             width: 0%;
             box-shadow: 0 0 10px #38bdf8;
-            transition: width 0.1s linear; /* Changed to linear for smoother CPU load */
-            will-change: width; /* Optimization: Tells browser to prep for change */
+            transition: width 0.1s linear;
+            will-change: width;
         }
 
         /* --- 3. Navigation --- */
@@ -66,7 +65,8 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            transition: transform 0.3s ease; /* Optimization: Only animate transform if needed */
+            transition: transform 0.3s ease;
+            flex-wrap: wrap; /* Allowed wrapping for mobile */
         }
 
         nav a {
@@ -104,13 +104,15 @@
             padding: 0 10%;
             max-width: 1600px;
             margin: 0 auto;
-            /* Optimization: Isolate this section for rendering */
             contain: content; 
+            /* Added for mobile stacking */
+            position: relative;
         }
 
         .hero-text h1 {
             font-family: 'Bodoni Moda', serif;
-            font-size: clamp(3.5rem, 8vw, 6rem);
+            /* Adjusted clamp for better mobile fit */
+            font-size: clamp(2.8rem, 8vw, 6rem);
             text-transform: uppercase;
             line-height: 1.05;
             letter-spacing: -2px;
@@ -123,7 +125,8 @@
             animation: textEntrance 1s ease forwards, shine 5s linear infinite;
             opacity: 0;
             transform: translateY(30px);
-            will-change: background-position; /* Optimization */
+            will-change: background-position;
+            word-wrap: break-word; /* Prevent overflow on small screens */
         }
 
         .hero-text p {
@@ -142,14 +145,13 @@
             width: 100%;
             filter: drop-shadow(0 20px 40px rgba(0,0,0,0.5));
             animation: zeroGravity 6s ease-in-out infinite;
-            will-change: transform; /* Optimization */
+            will-change: transform;
         }
 
         /* --- Global Optimization Class --- */
         section {
-            /* Optimization: Don't render sections until they are on screen */
             content-visibility: auto; 
-            contain-intrinsic-size: 1px 1000px; /* Placeholder height */
+            contain-intrinsic-size: 1px 1000px;
         }
 
         /* --- Global Section Title --- */
@@ -179,7 +181,7 @@
             margin-bottom: 150px;
             opacity: 0;
             transform: translateY(50px);
-            transition: opacity 0.8s ease, transform 0.8s ease; /* Removed complex bezier for speed */
+            transition: opacity 0.8s ease, transform 0.8s ease;
         }
 
         .service-row.reveal { opacity: 1; transform: translateY(0); }
@@ -188,7 +190,7 @@
 
         .service-content h2 {
             font-family: 'Bodoni Moda', serif;
-            font-size: clamp(3rem, 6vw, 4.5rem);
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
             margin-bottom: 15px;
             text-transform: uppercase;
             line-height: 1;
@@ -202,7 +204,7 @@
             font-weight: 300;
         }
 
-        /* --- 6. Projects (3D TILT OPTIMIZED) --- */
+        /* --- 6. Projects --- */
         .projects-wrapper {
             padding: 100px 5%;
             max-width: 1400px;
@@ -211,7 +213,8 @@
 
         .projects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            /* Adjusted minmax for better mobile responsiveness */
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 40px;
         }
 
@@ -220,7 +223,6 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             border-radius: 20px;
             overflow: hidden;
-            /* Optimized backdrop filter - simpler blur */
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             opacity: 0;
@@ -228,11 +230,10 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            
-            transition: opacity 0.6s ease; /* Only animate opacity here */
+            transition: opacity 0.6s ease;
             transform-style: preserve-3d;
             perspective: 1000px;
-            will-change: transform; /* Hint for GPU */
+            will-change: transform;
         }
 
         .project-card.reveal { opacity: 1; transform: translateY(0); }
@@ -318,13 +319,13 @@
 
         .view-link:hover { color: #faf8fc; transform: translateX(10px); }
 
-        /* --- 7. Buttons (SHIMMER) --- */
+        /* --- 7. Buttons --- */
         .pill-btn {
             background: linear-gradient(90deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.05) 100%);
             background-size: 200% 100%;
             color: #faf8fc;
             border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(5px); /* Reduced blur for performance */
+            backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
             padding: 16px 40px;
             border-radius: 50px;
@@ -338,6 +339,8 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            /* Flex for centering on mobile if needed */
+            text-align: center;
         }
 
         .pill-btn:hover {
@@ -521,7 +524,7 @@
         .btn-email { background: rgba(255, 255, 255, 0.1); color: #faf8fc; border: 1px solid rgba(255, 255, 255, 0.2); }
         .btn-email:hover { background: rgba(255, 255, 255, 0.2); }
 
-        /* --- 10. Modal (FIXED Z-INDEX) --- */
+        /* --- 10. Modal --- */
         .modal-overlay {
             position: fixed; 
             top: 0; left: 0; width: 100%; height: 100%;
@@ -550,7 +553,7 @@
         }
         .form-control:focus { outline: none; border-color: #38bdf8; background: rgba(255,255,255,0.1); }
 
-        /* --- 11. Subtle Footer --- */
+        /* --- 11. Footer --- */
         footer {
             text-align: center;
             padding: 40px 0;
@@ -583,6 +586,145 @@
         @keyframes zeroGravity { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-20px); } }
         @keyframes modalPop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
         @keyframes shine { to { background-position: 200% center; } }
+
+
+        /* =========================================
+           RESPONSIVE MEDIA QUERIES (Mobile Ready)
+           ========================================= */
+
+        /* Tablet & Smaller Laptops */
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                justify-content: center;
+                text-align: center;
+                padding-top: 120px; /* Space for Nav */
+                height: auto;
+                min-height: 100vh;
+                padding-bottom: 50px;
+            }
+            
+            .hero-text {
+                margin-bottom: 50px;
+                width: 100%;
+            }
+            
+            .hero-text p {
+                margin: 20px auto 0;
+            }
+
+            .big-logo {
+                width: 80%;
+                margin: 0 auto;
+            }
+
+            .service-row {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
+            .service-row.reverse {
+                direction: ltr; /* Reset direction so text is always readable */
+            }
+
+            .visual-symbol {
+                margin: 0 auto;
+                order: -1; /* Image on top usually looks good, or keep below. Let's keep existing order mostly */
+            }
+            
+            /* If you prefer image on top for every section: */
+            /* .service-row .visual-symbol { order: -1; } */
+
+            .btn-group {
+                justify-content: center;
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .checklist-items {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Mobile Phones */
+        @media (max-width: 768px) {
+            /* Responsive Navigation */
+            nav {
+                padding: 15px 0;
+                justify-content: center;
+            }
+
+            nav a {
+                margin: 5px 12px;
+                font-size: 0.75rem;
+                letter-spacing: 1px;
+            }
+
+            /* Adjust Titles */
+            .section-title {
+                font-size: 2rem;
+                margin-bottom: 50px;
+            }
+
+            .service-content h2 {
+                font-size: 2.5rem;
+            }
+
+            .services-wrapper, .projects-wrapper {
+                padding: 60px 5%;
+            }
+
+            /* Stack Grids */
+            .projects-grid, 
+            .lab-grid, 
+            .contact-grid {
+                grid-template-columns: 1fr; /* Full width cards */
+            }
+            
+            /* Adjust padding inside cards for mobile */
+            .lab-stat-box, .contact-card {
+                padding: 25px;
+            }
+            
+            .project-img {
+                height: 200px; /* Slightly shorter images on mobile */
+            }
+
+            /* Modal adjustments */
+            .modal-box {
+                padding: 25px;
+                width: 90%;
+                margin: 0 10px;
+            }
+
+            .pill-btn {
+                width: 100%; /* Full width buttons on mobile are easier to tap */
+                margin-right: 0;
+                text-align: center;
+            }
+            
+            /* Center logo in hero */
+            .big-logo img {
+                max-width: 300px;
+            }
+            
+            .contact-card:hover .contact-icon i {
+                transform: none; /* Disable complex 3D hover on touch devices */
+            }
+        }
+
+        /* Very Small Screens (e.g., iPhone SE) */
+        @media (max-width: 380px) {
+            .hero-text h1 {
+                font-size: 2.5rem; /* Force smaller size if clamp is still too big */
+            }
+            nav a {
+                margin: 5px 8px;
+                font-size: 0.7rem;
+            }
+        }
+
     </style>
 </head>
 <body>
