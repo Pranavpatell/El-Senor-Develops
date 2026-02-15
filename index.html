@@ -66,7 +66,7 @@
             -webkit-backdrop-filter: blur(12px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             transition: transform 0.3s ease;
-            flex-wrap: wrap; /* Allowed wrapping for mobile */
+            flex-wrap: wrap;
         }
 
         nav a {
@@ -105,13 +105,11 @@
             max-width: 1600px;
             margin: 0 auto;
             contain: content; 
-            /* Added for mobile stacking */
             position: relative;
         }
 
         .hero-text h1 {
             font-family: 'Bodoni Moda', serif;
-            /* Adjusted clamp for better mobile fit */
             font-size: clamp(2.8rem, 8vw, 6rem);
             text-transform: uppercase;
             line-height: 1.05;
@@ -126,7 +124,7 @@
             opacity: 0;
             transform: translateY(30px);
             will-change: background-position;
-            word-wrap: break-word; /* Prevent overflow on small screens */
+            word-wrap: break-word;
         }
 
         .hero-text p {
@@ -148,13 +146,11 @@
             will-change: transform;
         }
 
-        /* --- Global Optimization Class --- */
         section {
             content-visibility: auto; 
             contain-intrinsic-size: 1px 1000px;
         }
 
-        /* --- Global Section Title --- */
         .section-title {
             text-align: center;
             font-family: 'Bodoni Moda', serif;
@@ -204,7 +200,7 @@
             font-weight: 300;
         }
 
-        /* --- 6. Projects --- */
+        /* --- 6. Projects (With Live Preview) --- */
         .projects-wrapper {
             padding: 100px 5%;
             max-width: 1400px;
@@ -213,8 +209,7 @@
 
         .projects-grid {
             display: grid;
-            /* Adjusted minmax for better mobile responsiveness */
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 40px;
         }
 
@@ -251,23 +246,71 @@
 
         .project-card:hover::after { opacity: 0.1; }
 
-        .project-img {
+        /* LIVE PREVIEW CONTAINER */
+        .project-preview-container {
+            position: relative;
             width: 100%;
             height: 240px;
+            background: #000;
             overflow: hidden;
-            background: rgba(0,0,0,0.8); 
-            transform: translateZ(20px); 
+            transform: translateZ(20px);
         }
 
-        .project-img img {
+        /* The Static Image */
+        .static-thumb {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            object-position: top; 
-            transition: transform 0.5s ease;
+            object-position: top;
+            transition: opacity 0.5s ease;
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 2;
         }
 
-        .project-card:hover .project-img img { transform: scale(1.05); }
+        /* The Iframe (Hidden initially) */
+        .live-frame {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 400%;  /* 4x width for desktop resolution */
+            height: 400%; /* 4x height */
+            border: none;
+            transform: scale(0.25); /* Scale down to fit card */
+            transform-origin: top left;
+            opacity: 0;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+            background: #fff;
+            pointer-events: none; /* Keeps tilt smooth. Remove if you want clicks inside. */
+        }
+
+        /* Hover Logic */
+        .project-card:hover .static-thumb { opacity: 0; pointer-events: none; }
+        .project-card:hover .live-frame { opacity: 1; z-index: 3; }
+
+        /* Loading Spinner */
+        .loading-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.8);
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        .project-card.is-loading .loading-overlay { opacity: 1; z-index: 4; }
+
+        .spinner {
+            width: 30px; height: 30px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top: 3px solid #38bdf8;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         .project-info {
             padding: 30px;
@@ -339,7 +382,6 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
-            /* Flex for centering on mobile if needed */
             text-align: center;
         }
 
@@ -592,137 +634,47 @@
            RESPONSIVE MEDIA QUERIES (Mobile Ready)
            ========================================= */
 
-        /* Tablet & Smaller Laptops */
         @media (max-width: 992px) {
             .hero {
                 flex-direction: column;
                 justify-content: center;
                 text-align: center;
-                padding-top: 120px; /* Space for Nav */
+                padding-top: 120px;
                 height: auto;
                 min-height: 100vh;
                 padding-bottom: 50px;
             }
-            
-            .hero-text {
-                margin-bottom: 50px;
-                width: 100%;
-            }
-            
-            .hero-text p {
-                margin: 20px auto 0;
-            }
-
-            .big-logo {
-                width: 80%;
-                margin: 0 auto;
-            }
-
-            .service-row {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-
-            .service-row.reverse {
-                direction: ltr; /* Reset direction so text is always readable */
-            }
-
-            .visual-symbol {
-                margin: 0 auto;
-                order: -1; /* Image on top usually looks good, or keep below. Let's keep existing order mostly */
-            }
-            
-            /* If you prefer image on top for every section: */
-            /* .service-row .visual-symbol { order: -1; } */
-
-            .btn-group {
-                justify-content: center;
-                display: flex;
-                flex-wrap: wrap;
-            }
-
-            .checklist-items {
-                grid-template-columns: 1fr;
-            }
+            .hero-text { margin-bottom: 50px; width: 100%; }
+            .hero-text p { margin: 20px auto 0; }
+            .big-logo { width: 80%; margin: 0 auto; }
+            .service-row { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .service-row.reverse { direction: ltr; }
+            .visual-symbol { margin: 0 auto; order: -1; }
+            .btn-group { justify-content: center; display: flex; flex-wrap: wrap; }
+            .checklist-items { grid-template-columns: 1fr; }
         }
 
-        /* Mobile Phones */
         @media (max-width: 768px) {
-            /* Responsive Navigation */
-            nav {
-                padding: 15px 0;
-                justify-content: center;
-            }
-
-            nav a {
-                margin: 5px 12px;
-                font-size: 0.75rem;
-                letter-spacing: 1px;
-            }
-
-            /* Adjust Titles */
-            .section-title {
-                font-size: 2rem;
-                margin-bottom: 50px;
-            }
-
-            .service-content h2 {
-                font-size: 2.5rem;
-            }
-
-            .services-wrapper, .projects-wrapper {
-                padding: 60px 5%;
-            }
-
-            /* Stack Grids */
-            .projects-grid, 
-            .lab-grid, 
-            .contact-grid {
-                grid-template-columns: 1fr; /* Full width cards */
-            }
-            
-            /* Adjust padding inside cards for mobile */
-            .lab-stat-box, .contact-card {
-                padding: 25px;
-            }
-            
-            .project-img {
-                height: 200px; /* Slightly shorter images on mobile */
-            }
-
-            /* Modal adjustments */
-            .modal-box {
-                padding: 25px;
-                width: 90%;
-                margin: 0 10px;
-            }
-
-            .pill-btn {
-                width: 100%; /* Full width buttons on mobile are easier to tap */
-                margin-right: 0;
-                text-align: center;
-            }
-            
-            /* Center logo in hero */
-            .big-logo img {
-                max-width: 300px;
-            }
-            
-            .contact-card:hover .contact-icon i {
-                transform: none; /* Disable complex 3D hover on touch devices */
-            }
+            nav { padding: 15px 0; justify-content: center; }
+            nav a { margin: 5px 12px; font-size: 0.75rem; letter-spacing: 1px; }
+            .section-title { font-size: 2rem; margin-bottom: 50px; }
+            .service-content h2 { font-size: 2.5rem; }
+            .services-wrapper, .projects-wrapper { padding: 60px 5%; }
+            .projects-grid, .lab-grid, .contact-grid { grid-template-columns: 1fr; }
+            .lab-stat-box, .contact-card { padding: 25px; }
+            .project-preview-container { height: 200px; }
+            .modal-box { padding: 25px; width: 90%; margin: 0 10px; }
+            .pill-btn { width: 100%; margin-right: 0; text-align: center; }
+            .big-logo img { max-width: 300px; }
+            .contact-card:hover .contact-icon i { transform: none; }
+            /* Hide live preview on mobile to save data/battery */
+            .live-frame { display: none !important; }
+            .project-card:hover .static-thumb { opacity: 1 !important; }
         }
 
-        /* Very Small Screens (e.g., iPhone SE) */
         @media (max-width: 380px) {
-            .hero-text h1 {
-                font-size: 2.5rem; /* Force smaller size if clamp is still too big */
-            }
-            nav a {
-                margin: 5px 8px;
-                font-size: 0.7rem;
-            }
+            .hero-text h1 { font-size: 2.5rem; }
+            nav a { margin: 5px 8px; font-size: 0.7rem; }
         }
 
     </style>
@@ -791,8 +743,11 @@
     <section id="projects" class="projects-wrapper">
         <div class="section-title">Selected Works</div>
         <div class="projects-grid">
+            
             <div class="project-card tilt-card">
-                <div class="project-img"><img src="ET.png" alt="Oceanic UI Concept" loading="lazy" decoding="async"></div>
+                <div class="project-preview-container">
+                    <img src="ET.png" class="static-thumb" alt="Oceanic UI Concept" loading="lazy" decoding="async">
+                </div>
                 <div class="project-info">
                     <span class="trust-badge">Concept Project</span>
                     <h3>Oceanic UI Architecture</h3>
@@ -800,24 +755,35 @@
                     <a href="#" class="view-link">See How It Works &rarr;</a>
                 </div>
             </div>
-            <div class="project-card tilt-card">
-                <div class="project-img"><img src="Realty.png" alt="El Señor Realty Portal" loading="lazy" decoding="async"></div>
+
+            <div class="project-card tilt-card" onmouseenter="loadPreview(this)" data-url="https://pranavpatell.github.io/ELSENORREALTY/">
+                <div class="project-preview-container">
+                    <img src="Realty.png" class="static-thumb" alt="El Señor Realty Portal" loading="lazy" decoding="async">
+                    <iframe class="live-frame" frameborder="0" scrolling="no"></iframe>
+                    <div class="loading-overlay"><div class="spinner"></div></div>
+                </div>
                 <div class="project-info">
                     <span class="trust-badge">Internal Prototype</span>
                     <h3>Él Señor Realty Global</h3>
-                    <p>Designed to help real estate companies sell properties faster. High-speed performance meets high-end aesthetics to build trust with luxury buyers.</p>
-                    <a href="https://pranavpatell.github.io/ELSENORREALTY/" class="view-link">View Live Preview &rarr;</a>
+                    <p>Designed to help real estate companies sell properties faster. Hover to see the live site.</p>
+                    <a href="https://pranavpatell.github.io/ELSENORREALTY/" target="_blank" class="view-link">View Live Site &rarr;</a>
                 </div>
             </div>
-            <div class="project-card tilt-card">
-                <div class="project-img"><img src="Screenshot 2025-03-28 190417 - Copy.png" alt="El Senor Enterprises Corporate" loading="lazy" decoding="async"></div>
+
+            <div class="project-card tilt-card" onmouseenter="loadPreview(this)" data-url="https://pranavpatell.github.io/El-Senor-Developers/">
+                <div class="project-preview-container">
+                    <img src="Screenshot 2025-03-28 190417 - Copy.png" class="static-thumb" alt="El Senor Enterprises Corporate" loading="lazy" decoding="async">
+                    <iframe class="live-frame" frameborder="0" scrolling="no"></iframe>
+                    <div class="loading-overlay"><div class="spinner"></div></div>
+                </div>
                 <div class="project-info">
                     <span class="trust-badge">Demo Build</span>
                     <h3>Enterprises Secure Portal</h3>
-                    <p>A distraction-free corporate portal. Prioritizes speed and clarity to streamline user acquisition and reduce drop-off.</p>
-                    <a href="https://pranavpatell.github.io/El-Senor-Developers/" class="view-link">Explore Project &rarr;</a>
+                    <p>A distraction-free corporate portal. Prioritizes speed and clarity. Hover to interact.</p>
+                    <a href="https://pranavpatell.github.io/El-Senor-Developers/" target="_blank" class="view-link">Explore Project &rarr;</a>
                 </div>
             </div>
+
         </div>
     </section>
 
@@ -983,7 +949,7 @@
         // --- 1. CRASH-PROOF SCROLL PROGRESS BAR ---
         window.onscroll = function() {
             const bar = document.getElementById("progressBar");
-            if (!bar) return; // Stop if element is missing
+            if (!bar) return;
             
             let winScroll = document.body.scrollTop || document.documentElement.scrollTop;
             let height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
@@ -991,12 +957,11 @@
             bar.style.width = scrolled + "%";
         };
 
-        // --- 2. OPTIMIZED 3D TILT EFFECT (THROTTLED) ---
-        // Optimization: Uses requestAnimationFrame to stop lag on "potato PCs"
+        // --- 2. OPTIMIZED 3D TILT EFFECT ---
         const tiltCards = document.querySelectorAll(".tilt-card");
         if(tiltCards) {
             tiltCards.forEach(card => {
-                let ticking = false; // Throttling variable
+                let ticking = false;
 
                 card.addEventListener("mousemove", (e) => {
                     if (!ticking) {
@@ -1006,7 +971,6 @@
                             const y = e.clientY - rect.top;
                             const centerX = rect.width / 2;
                             const centerY = rect.height / 2;
-                            // Reduce rotation force slightly for smoother feeling
                             const rotateX = (centerY - y) / 15; 
                             const rotateY = (x - centerX) / 15;
                             card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
@@ -1022,16 +986,14 @@
             });
         }
 
-        // --- 3. SCROLL REVEAL & COUNTERS ---
-        const observerOptions = { threshold: 0.1 }; // Lower threshold for faster detection
+        // --- 3. SCROLL REVEAL ---
+        const observerOptions = { threshold: 0.1 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('reveal');
                     const counters = entry.target.querySelectorAll('.stat-number[data-target]');
                     counters.forEach(counter => animateCounter(counter));
-                    // Optional: Stop observing once revealed to save CPU
-                    // observer.unobserve(entry.target); 
                 }
             });
         }, observerOptions);
@@ -1045,7 +1007,7 @@
                 counter.setAttribute('data-animated', 'true');
                 const target = +counter.getAttribute('data-target');
                 const suffix = counter.getAttribute('data-suffix') || '';
-                const increment = target / 30; // Faster count for perceived speed
+                const increment = target / 30;
                 let c = 0;
                 const updateCounter = () => {
                     c += increment;
@@ -1060,14 +1022,36 @@
             }
         }
 
-        // --- 4. MODAL LOGIC (FIXED) ---
+        // --- 4. LIVE PREVIEW LOADER ---
+        function loadPreview(card) {
+            const url = card.getAttribute('data-url');
+            const iframe = card.querySelector('.live-frame');
+            
+            // Safety checks: if no URL or if on mobile (iframe is hidden via CSS)
+            if (!url || !iframe || getComputedStyle(iframe).display === 'none') return;
+            
+            // If iframe is already loaded, do nothing
+            if (iframe.getAttribute('src') === url) return;
+
+            // Start Loading
+            card.classList.add('is-loading');
+            
+            // Set Source
+            iframe.setAttribute('src', url);
+
+            // When iframe finishes loading, hide spinner
+            iframe.onload = function() {
+                card.classList.remove('is-loading');
+            };
+        }
+
+        // --- 5. MODAL LOGIC ---
         let currentMode = ''; 
         function openModal(mode) {
             currentMode = mode;
             const modal = document.getElementById('contactModal');
             const title = document.getElementById('modalTitle');
-            
-            if(!modal || !title) { console.error("Modal Missing!"); return; }
+            if(!modal || !title) return;
 
             if (mode === 'whatsapp') { title.innerText = "Send via WhatsApp"; title.style.color = "#4ade80"; } 
             else { title.innerText = "Send via Email"; title.style.color = "#faf8fc"; }
@@ -1082,8 +1066,6 @@
 
         function handleFormSubmit(e) {
             e.preventDefault();
-            
-            // ⚠️ REPLACE WITH YOUR DETAILS
             const myPhoneNumber = "919265939113"; 
             const myEmail = "pp5749402@gmail.com";
 
